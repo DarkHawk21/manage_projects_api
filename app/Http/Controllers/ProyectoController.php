@@ -9,14 +9,40 @@ class ProyectoController extends Controller
 {
     public function index()
     {
-        $proyectos = Proyecto::all();
+        $proyectos = Proyecto::with([
+                'responsable',
+                'tareas'
+            ])
+            ->get()
+            ->map(function($proyecto) {
+                return [
+                    'id' => $proyecto->id,
+                    'nombre' => $proyecto->nombre,
+                    'responsable' => [
+                        'id' => $proyecto->responsable->id,
+                        'nombre' => $proyecto->responsable->name
+                    ],
+                    'descripcion' => $proyecto->descripcion,
+                    'tareas_resumen' => [
+                        'total' => $proyecto->tareas->count(),
+                        'finalizadas' => $proyecto->tareas()
+                            ->where('estatus_id', 3)
+                            ->count()
+                    ],
+                    'fecha_entrega' => $proyecto->fecha_entrega
+                ];
+            });
 
         return response()->json($proyectos);
     }
 
     public function getOne($proyectoId)
     {
-        $proyecto = Proyecto::where('id', $proyectoId)
+        $proyecto = Proyecto::with([
+                'responsable',
+                'tareas'
+            ])
+            ->where('id', $proyectoId)
             ->first();
 
         return response()->json($proyecto);
@@ -42,10 +68,10 @@ class ProyectoController extends Controller
             return response()->json(['error' => 'Registro no encontrado.'], 404);
         }
 
-        $proyectoActual->nombre = $request->input('nombre');
-        $proyectoActual->descripcion = $request->input('descripcion');
-        $proyectoActual->fecha_entrega = $request->input('fecha_entrega');
-        $proyectoActual->responsable_id = $request->input('responsable_id');
+        $proyectoActual->nombre = $request->input('nombre', $proyectoActual->nombre);
+        $proyectoActual->descripcion = $request->input('descripcion', $proyectoActual->descripcion);
+        $proyectoActual->fecha_entrega = $request->input('fecha_entrega', $proyectoActual->fecha_entrega);
+        $proyectoActual->responsable_id = $request->input('responsable_id', $proyectoActual->responsable_id);
 
         $proyectoActual->save();
 

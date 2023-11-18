@@ -15,7 +15,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'getUsers']]);
     }
 
     /**
@@ -115,5 +115,12 @@ class AuthController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60,
             'user' => auth()->user()
         ]);
+    }
+
+    public function getUsers()
+    {
+        $usuarios = User::all();
+
+        return response()->json($usuarios);
     }
 }
