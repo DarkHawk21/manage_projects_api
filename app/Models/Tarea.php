@@ -29,7 +29,7 @@ class Tarea extends Model
 
     public function estatus()
     {
-        return $this->hasOne(
+        return $this->belongsTo(
             TareaEstatus::class,
             'estatus_id',
             'id'

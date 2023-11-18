@@ -39,11 +39,44 @@ class ProyectoController extends Controller
     public function getOne($proyectoId)
     {
         $proyecto = Proyecto::with([
-                'responsable',
-                'tareas'
-            ])
-            ->where('id', $proyectoId)
-            ->first();
+            'responsable',
+            'tareas'
+        ])
+        ->where('id', $proyectoId)
+        ->first();
+
+        $proyecto = [
+            'id' => $proyecto->id,
+            'nombre' => $proyecto->nombre,
+            'responsable' => [
+                'id' => $proyecto->responsable->id,
+                'nombre' => $proyecto->responsable->name
+            ],
+            'descripcion' => $proyecto->descripcion,
+            'tareas_resumen' => [
+                'total' => $proyecto->tareas->count(),
+                'finalizadas' => $proyecto->tareas()
+                    ->where('estatus_id', 3)
+                    ->count()
+            ],
+            'tareas' => $proyecto->tareas->map(function($tarea) {
+                return [
+                    'id' => $tarea->id,
+                    'nombre' => $tarea->nombre,
+                    'descripcion' => $tarea->descripcion,
+                    'responsable' => [
+                        'id' => $tarea->responsable->id,
+                        'nombre' => $tarea->responsable->name
+                    ],
+                    'estatus' => [
+                        'id' => $tarea->estatus->id,
+                        'nombre' => $tarea->estatus->nombre
+                    ],
+                    'fecha_entrega' => $tarea->fecha_entrega
+                ];
+            }),
+            'fecha_entrega' => $proyecto->fecha_entrega
+        ];
 
         return response()->json($proyecto);
     }
