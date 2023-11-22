@@ -44,8 +44,7 @@ Route::group([
     Route::get('/tareas/{tareaId}', [TareaController::class, 'getOne']);
 
     Route::post('/tareas', [TareaController::class, 'storeOne']);
-
-    Route::put('/tareas/{tareaId}', [TareaController::class, 'updateOne']);
+    Route::post('/tareas-update/{tareaId}', [TareaController::class, 'updateOne']);
 
     Route::delete('/tareas/{tareaId}', [TareaController::class, 'deleteOne']);
 });

@@ -44,12 +44,12 @@ class TareaController extends Controller
             return response()->json(['error' => 'Registro no encontrado.'], 404);
         }
 
-        $tareaActual->nombre = $request->input('nombre');
-        $tareaActual->descripcion = $request->input('descripcion');
-        $tareaActual->fecha_entrega = $request->input('fecha_entrega');
-        $tareaActual->responsable_id = $request->input('responsable_id');
-        $tareaActual->proyecto_id = $request->input('proyecto_id');
-        $tareaActual->estatus_id = $request->input('estatus_id');
+        $tareaActual->nombre = $request->input('nombre', $tareaActual->nombre);
+        $tareaActual->descripcion = $request->input('descripcion', $tareaActual->descripcion);
+        $tareaActual->fecha_entrega = $request->input('fecha_entrega', $tareaActual->fecha_entrega);
+        $tareaActual->responsable_id = $request->input('responsable_id', $tareaActual->responsable_id);
+        $tareaActual->proyecto_id = $request->input('proyecto_id', $tareaActual->proyecto_id);
+        $tareaActual->estatus_id = $request->input('estatus_id', $tareaActual->estatus_id);
 
         $tareaActual->save();
 
